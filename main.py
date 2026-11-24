@@ -17,7 +17,24 @@ SENTENCE = (
 )
 
 
+def validate_sentence(text: str) -> None:
+    """Check the entry against the gate before writing it out.
+
+    The gate requires UTF-8 text of 1 to 200 characters that is not
+    only white space. Fail loudly here rather than shipping an entry
+    the scorer would refuse.
+    """
+    text.encode("utf-8")  # raises UnicodeEncodeError if not encodable
+    if not text.strip():
+        raise ValueError("entry is blank or only white space")
+    if len(text) > 200:
+        raise ValueError(
+            f"entry is {len(text)} characters, over the 200-character limit"
+        )
+
+
 def main() -> None:
+    validate_sentence(SENTENCE)
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8") as f:
         f.write(SENTENCE)
